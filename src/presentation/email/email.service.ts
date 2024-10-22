@@ -34,13 +34,13 @@ export class EmailService {
 
         const { to, subject, htmlBody, attachments } = options;
         try{
-            const sentInformation = await this.transporter.sendMail({
-                from: envs.MAILER_EMAIL,
-                to,
-                subject,
-                html: htmlBody,
-                attachments
-            });
+            // const sentInformation = await this.transporter.sendMail({
+            //     from: envs.MAILER_EMAIL,
+            //     to,
+            //     subject,
+            //     html: htmlBody,
+            //     attachments
+            // });
 
             return true;
         }

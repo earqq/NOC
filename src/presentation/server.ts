@@ -1,15 +1,21 @@
 import { envs } from "../config/plugins/envs.plugin";
-import { CheckService } from "../domain/use-cases/checks/check-service";
-import { SendEmailLogs } from "../domain/use-cases/logs/email/send-logs";
+import { CheckServiceMultiple } from "../domain/use-cases/checks/check-service-multipe";
 import { FileSystemDataSource } from "../infrastructure/datasource/file-system.datasource";
 import { MongoLogDatasource } from "../infrastructure/datasource/mongo-log.datasource";
+import { PostgresLogDatasource } from "../infrastructure/datasource/postgres-log.datasource";
 import { LogRepositoryImpl } from "../infrastructure/repositories/log.repository.impl";
 import { CronService } from "./cron/cron-service";
 import { EmailService } from "./email/email.service";
 
 
-const fileSystemLogRepository = new LogRepositoryImpl(
+const fsSystemLogRepository = new LogRepositoryImpl(
+    new FileSystemDataSource()
+);
+const mongoSystemLogRepository = new LogRepositoryImpl(
     new MongoLogDatasource()
+);
+const postgresSystemLogRepository = new LogRepositoryImpl(
+    new PostgresLogDatasource()
 );
 
 export class Server{
@@ -25,25 +31,25 @@ export class Server{
         //     'earq14@gmail.com'
         // );
 
-        new SendEmailLogs(emailService, fileSystemLogRepository).execute('earq14@gmail.com');
+        // new SendEmailLogs(emailService, fileSystemLogRepository).execute('earq14@gmail.com');
 
         emailService.sendEmailWithAttachment(
             'earq14@gmail.com'
         );
         //Send email
 
-        CronService.createJob('*/2 * * * * *', () => {
+        // CronService.createJob('*/2 * * * * *', () => {
 
-            new CheckService(
-                fileSystemLogRepository,
-                () => {
-                    console.log('success:');
-                },
-                (error) => {
-                    console.error('Error:', error);
-                }
-            ).execute("https://www.google.com");
-        });
+        //     new CheckServiceMultiple(
+        //         [ fsSystemLogRepository, mongoSystemLogRepository, postgresSystemLogRepository ],
+        //         () => {
+        //             console.log('success:');
+        //         },
+        //         (error) => {
+        //             console.error('Error:', error);
+        //         }
+        //     ).execute("https://www.google.com");
+        // });
 
     }
 }
